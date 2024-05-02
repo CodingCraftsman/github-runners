@@ -1,0 +1,17 @@
+on:
+  - workflow_dispatch
+
+jobs:
+  test_ubuntu_2204_basic_runner:
+    name: Validate execution of ubuntu-22.04-basic runner image
+    runs-on:
+      - "self-hosted"
+      - ubuntu
+      - jammy
+    steps:
+      - name: smoke test
+        run: |
+          uname -a
+          for c in bash bzip2 curl gcc g++ gzip make python python3 tar unzip wget zip ; do
+            command -v "${c}" || echo "${c} not found"
+          done

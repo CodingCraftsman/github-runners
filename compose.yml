@@ -1,0 +1,28 @@
+services:
+  runner-linux-x64-ubuntu-2204:
+    build:
+      context: ./ubuntu-22.04-basic
+    image: github-runner-linux-x64-ubuntu-2204:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.35"
+          memory: 300M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+    environment:
+      - ORG_FILE=/run/secrets/gh_org
+      - TOKEN_FILE=/run/secrets/gh_access_token
+    restart: always
+    secrets:
+      - gh_access_token
+      - gh_org
+
+secrets:
+  gh_access_token:
+    file: gh_access_token.txt
+  gh_org:
+    file: gh_org.txt
