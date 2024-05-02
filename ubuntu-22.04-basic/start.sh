@@ -29,7 +29,7 @@ REG_URI="https://api.github.com/orgs/${GH_ORG}/actions/runners/registration-toke
 REG_TOKEN=$(curl -X POST -H "Authorization: token ${GH_PAT}" -H "Accept: application/vnd.github-json" ${REG_URI} | jq .token --raw-output)
 
 cd /home/docker/actions-runner
-./config.sh --unattended --url https://github.com/${GH_ORG} --token ${REG_TOKEN}
+./config.sh --unattended --url https://github.com/${GH_ORG} --token ${REG_TOKEN} --labels ubuntu,jammy
 
 cleanup() {
     echo "Removing runner ..."
