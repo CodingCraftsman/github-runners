@@ -20,6 +20,27 @@ services:
     secrets:
       - gh_access_token
       - gh_org
+  runner-linux-x64-ubuntu-2404:
+    build:
+      context: ./ubuntu-24.04
+    image: github-runner-linux-x64-ubuntu-2404:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.35"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 384M
+    environment:
+      - ORG_FILE=/run/secrets/gh_org
+      - TOKEN_FILE=/run/secrets/gh_access_token
+    restart: always
+    secrets:
+      - gh_access_token
+      - gh_org
 
 secrets:
   gh_access_token:
