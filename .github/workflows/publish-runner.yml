@@ -1,0 +1,55 @@
+name: Publish Runner
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+  workflow_dispatch: { }
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-base-kaniko:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Docker Metadata
+        id: meta-data
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/CodingCraftsman/runner-base-kaniko
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha,prefix=,format=long
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: runner-base-kaniko/
+          file: runner-base-kaniko/Dockerfile
+          push: ${{ github.ref == 'refs/heads/main' }}
+          annotations: ${{ steps.meta-data.outputs.annotations }}
+          labels: ${{ steps.meta-data.outputs.labels }}
+          tags: ${{ steps.meta-data.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
