@@ -33,4 +33,4 @@ COPY --from=kaniko /kaniko/executor /usr/local/bin/executor
 RUN chmod +x /usr/local/bin/executor && /usr/local/bin/executor --help >/dev/null || true
 
 # Non-root runtime aligns with ARC defaults
-USER 1000
+USER 1001
